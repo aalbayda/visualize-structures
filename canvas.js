@@ -107,3 +107,9 @@ const newPointer = () => {
     }
     animatePointer();
 }
+
+const setTitle = (structType) => {
+    c.clearRect(0, 0, canvas.width, canvas.height)
+    c.font = "30px Helvetica";
+    c.fillText(structType, canvas.width/2, 100);
+}
