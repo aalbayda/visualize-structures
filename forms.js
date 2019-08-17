@@ -1,3 +1,5 @@
+setTitle("Linked list");
+
 const createForm = (structType) => {
     switch(structType) {
         case "Linked list":

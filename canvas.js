@@ -109,7 +109,7 @@ const newPointer = (x, y) => {
 
 const setTitle = (structType) => {
     c.clearRect(0, 0, canvas.width, canvas.height)
-    c.font = "30px Helvetica";
+    c.font = "40px Helvetica";
     c.fillText(structType, canvas.width/2, 100);
 }
 
@@ -136,6 +136,8 @@ class Stack {
 
 const newStack = () => {
     let stack = new Stack();
+    c.clearRect(0, 0, canvas.width, canvas.height);
+    setTitle("Stack");
     newHead();
     document.querySelector('textarea').innerHTML = `typedef struct Stack {
     int data;
@@ -145,4 +147,7 @@ const newStack = () => {
 STACK* head = (STACK*)malloc(sizeof(STACK));
 head->next = NULL;
     `;
+}
+const push = (e) => {
+    stack.push(e);
 }
