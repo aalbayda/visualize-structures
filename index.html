@@ -32,7 +32,7 @@
         <!--App-->
         <div class="container w-100">
             <div class="row">
-                <div class="card bg-dark text-white col-sm">
+                <div class="card bg-dark text-white col-5">
                     <div class="card-body">
                         <form>
                             <div class="form-group" id="form-struct-type">
@@ -42,14 +42,30 @@
                                     <option>Stack</option>
                                     <option>Queue</option>
                                 </select>
+                                <div id="form-operations">
+                                        <div class="form-group" style="margin-top: 5%">
+                                            <label for="select-struct-type">Operation</label>
+                                            <div class="row">
+                                                <div class="col-sm">
+                                                    <select class="form-control" id="select-operation" oninput="handleChange()">
+                                                        <option>Insert at</option>
+                                                        <option>Delete at</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm">
+                                                    <input class="form-control" type="number" placeholder="Index"></input>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
                             </div>
                         </form>
                     </div>
                 </div>
-                <div class="card bg-dark text-white col-sm">
+                <div class="card bg-dark text-white col">
                     <div class="card-body">
-                        <label for="code">C snippet code</label>
-                        <textarea class="form-control" style="font-family: 'Courier New', Courier, monospace"></textarea>
+                        <label for="code">Code in C</label>
+                        <textarea class="form-control" rows="5" style="font-family: 'Courier New', Courier, monospace"></textarea>
                     </div>
                 </div>
             </div>
