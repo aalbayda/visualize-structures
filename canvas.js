@@ -49,7 +49,7 @@ class Node { // circular head node
         this.y = y;
         this.r = 0; // Radius
         this.update = () => {
-            this.r += .5;
+            this.r += .7;
             this.draw();
         }
         this.draw = () => {
@@ -65,27 +65,26 @@ class Node { // circular head node
 // Head
 const newHead = () => {
     c.font = "18px Helvetica";
-    c.fillText("HEAD", 100, 90);
-    let head = new Node(150, 150);
+    let head = new Node(150, 200);
     const animateHead = () => {
-        requestAnimationFrame(animateHead
-            );
+        requestAnimationFrame(animateHead);
         if (head.r <= 50) {
             head.update();
         }
         else {
+            c.fillText("HEAD", 100, 130);
             c.beginPath();
             c.fillStyle = "#000000";
             c.arc(head.x, head.y, 5, 0, Math.PI*2, false);
-            c.fill();
+            c.fill();         
         }
     }
     animateHead();
 }
 
 // Pointer
-const newPointer = () => {
-    let p = new Pointer(150, 150, 250, 150, "right");
+const newPointer = (x, y) => {
+    let p = new Pointer(x, y, 250, 150, "right");
     const animatePointer = () => {
         requestAnimationFrame(animatePointer);
         if (p.x2 <= 250) {
@@ -112,4 +111,38 @@ const setTitle = (structType) => {
     c.clearRect(0, 0, canvas.width, canvas.height)
     c.font = "30px Helvetica";
     c.fillText(structType, canvas.width/2, 100);
+}
+
+// Stack class
+class Stack {
+    constructor() {
+        this.elements = [];
+        this.push = (e) => {
+            this.elements.push(e);
+        };
+        this.pop = () => {
+            if (this.elements.length == 0)
+                return "Underflow";
+            return this.elements.pop;
+        };
+        this.peek = () => {
+            return this.elements[this.elements.length-1];
+        };
+        this.isEmpty = () => {
+            return this.items.length == 0;
+        };
+    }
+}
+
+const newStack = () => {
+    let stack = new Stack();
+    newHead();
+    document.querySelector('textarea').innerHTML = `typedef struct Stack {
+    int data;
+    struct* next;
+} STACK;
+
+STACK* head = (STACK*)malloc(sizeof(STACK));
+head->next = NULL;
+    `;
 }
