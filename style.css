@@ -1,0 +1,21 @@
+body {
+    background: url('https://images.unsplash.com/photo-1477238134895-98438ad85c30?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+.card {
+    min-height: 200px;
+    margin: 1%;
+}
+
+canvas {
+    margin-top: 1%;
+    margin-bottom: 1%;
+    width: 100%;
+    background-color: #EEE;
+    border: .5px solid lightgrey;
+    border-radius: 5px;
+}
