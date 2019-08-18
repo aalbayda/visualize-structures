@@ -103,26 +103,6 @@ const newHead = () => {
     animateHead();
 }
 
-const newTail = () => {
-    const animateHead = () => {
-        let id = requestAnimationFrame(animateHead);
-        if (head.r <= 20) {
-            head.update();
-        }
-        else {          
-            c.beginPath();
-            c.fillStyle = "#000000";
-            c.arc(head.x, head.y, 5, 0, Math.PI*2, false);
-            c.fill();
-            document.getElementById('btn-push').disabled = false;  
-            c.font = "16px Helvetica";
-            c.fillText("Head (top)", head.x-150, head.y-20);
-            cancelAnimationFrame(id);
-        }
-    }
-    animateHead();
-}
-
 const setTitle = (structType) => {
     c.clearRect(0, 0, canvas.width, canvas.height)
     c.font = "30px Helvetica, Arial, sans-serif";
@@ -164,7 +144,7 @@ typedef struct Node {
 } NODE;
 
 NODE* head = (NODE*)malloc(sizeof(NODE));
-head->next = NULL;
+head = NULL;
     `;
 }
 const push = (e) => {
@@ -303,6 +283,8 @@ const deleteNode = () => {
 
             if (stack.elements.length > 1)
                 document.getElementById('btn-pop').disabled = false;
+
+            c.fillStyle = "#000"
         }
     }
     animate();
@@ -321,3 +303,166 @@ int pop(NODE** head) {
 pop(&head);
 `
 }
+
+/* QUEUES */
+
+// class Queue {
+//     constructor() {
+//         this.elements = [];
+//         this.enqueue = (e) => {
+//             this.elements.unshift(e);
+//         };
+//         this.dequeue = () => {
+//             return this.elements.pop();
+//         };
+//         this.getFront = () => {
+//             return this.elements[0];
+//         };
+//         this.isEmpty = () => {
+//             return this.elements.length == 0;
+//         };
+//     }
+// }
+
+// const enqueue = (e) => {
+//     let data = Math.round((Math.random()*100)+1);
+//     console.log(queue.isEmpty())
+//     let node, p;
+//     if (queue.isEmpty()) {
+//         node = new Node(head.x, head.y+100);
+//         document.getElementById('btn-push').disabled = false;
+
+//         document.querySelector('textarea').innerHTML = `
+// void enqueue(NODE* tail, int data) {
+//     NODE* newNode =  (NODE*)malloc(sizeof(NODE));
+//     newNode->data = data;
+//     tail->next = newNode;
+//     tail = newNode;
+// }
+// enqueue(tail, ${data});
+// `
+//     }
+//     else {
+//         node = new Node(stack.peek().x, stack.peek().y+100);
+
+//         document.querySelector('textarea').innerHTML = `
+// void push(NODE* head, int data) {
+//     NODE* newNode =  (NODE*)malloc(sizeof(NODE));
+//     newNode->data = data;
+//     newNode->next = head;
+//     head = newNode;
+// }
+// push(head, ${data});
+// `
+//     }
+//     const animatePointer = () => {
+//         let id = requestAnimationFrame(animatePointer);
+//         if (p.y2 <= node.y-15) {
+//             console.log(p.y2)
+//             p.update();
+//         }
+//         else {
+//             c.beginPath();
+//             c.moveTo(p.x2, p.y2);
+//             c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); // Right arrowhead
+//             c.stroke();
+//             c.closePath();
+//             c.beginPath();
+//             c.moveTo(p.x2, p.y2);
+//             c.lineTo(p.x2-5*Math.cos(45), p.y2-5*Math.sin(45)); // Left arrowhead
+//             c.stroke();
+//             c.closePath();
+
+//             // Enable pop
+//             document.getElementById('btn-pop').disabled = false;
+//             cancelAnimationFrame(id);
+//         }
+//     }
+
+//     const animateNode = () => {
+//         let id = requestAnimationFrame(animateNode);
+//         if (node.r <= 20) {
+//             node.update();
+//             document.getElementById('btn-push').disabled = true;
+//         }
+//         else {
+//             c.beginPath();
+//             c.fillStyle = "#000000";
+//             c.arc(node.x, node.y, 5, 0, Math.PI*2, false);
+//             c.fill();
+//             // Pointer to NULL
+//             c.beginPath();
+//             c.fillStyle = "#000000";
+//             c.arc(node.x, node.y, 5, 0, Math.PI*2, false);
+//             c.fill();
+
+//             // Pointer to arrow
+//             p = new Pointer(stack.peek().x, stack.peek().y, node.x, node.y-15, "down");
+
+//             animatePointer();
+
+//             // Label
+//             c.font = "16px Helvetica";
+//             c.fillText(`int data = ${data};`, node.x-130, node.y-20);
+//             cancelAnimationFrame(id);
+//             stack.push(node);
+//             document.getElementById('btn-push').disabled = false;
+//             if (stack.elements.length == 8)
+//                 document.getElementById('btn-push').disabled = true;
+//         }
+        
+//     }
+//     c.clearRect(stack.peek().x, stack.peek().y+50, canvas.width, canvas.height);
+//     c.clearRect(stack.peek().x, stack.peek().y+50, -canvas.width, canvas.height);
+//     animateNode();
+
+    
+// }
+
+// const deleteNode = () => {
+//     let r = 1;
+//     const animate = () => {
+//         let id = requestAnimationFrame(animate);
+//         console.log(r)
+//         if (r <= 20) {
+//             document.getElementById('btn-pop').disabled = true;
+//             r += 0.5;
+//             c.beginPath();
+//             c.arc(stack.peek().x, stack.peek().y, r, 0, Math.PI*2, false);
+//             c.fillStyle = "#FF0000";
+//             c.fill();
+//         }
+//         else {
+//             // Erase
+//             cancelAnimationFrame(id);
+//             c.clearRect(stack.peek().x, stack.peek().y, canvas.width, canvas.height);
+//             c.clearRect(stack.peek().x, stack.peek().y, -canvas.width, canvas.height);
+//             c.clearRect(stack.peek().x, stack.peek().y, -canvas.width, -45);
+//             c.clearRect(stack.peek().x, stack.peek().y, canvas.width, -45);
+
+//             // New arrowheads
+//             let fromX = stack.peek().x, fromY = stack.peek().y;
+//             c.beginPath();
+//             c.moveTo(fromX, fromY-45);
+//             c.lineTo(fromX+5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Right arrowhead
+//             c.stroke();
+//             c.closePath();
+//             c.beginPath();
+//             c.moveTo(fromX, fromY-45);
+//             c.lineTo(fromX-5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Left arrowhead
+//             c.stroke();
+//             c.closePath();
+
+//             // "NULL"
+//             c.fillText("NULL", fromX-10, fromY-30);
+
+//             stack.pop();
+
+//             if (stack.elements.length > 1)
+//                 document.getElementById('btn-pop').disabled = false;
+
+//             c.fillStyle = "#000"
+//         }
+//     }
+//     animate();
+// }
