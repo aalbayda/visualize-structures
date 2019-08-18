@@ -302,6 +302,8 @@ int pop(NODE** head) {
 } 
 pop(&head);
 `
+    if (stack.elements.length < 8)
+        document.getElementById('btn-push').disabled = false;
 }
 
 /* QUEUES */
