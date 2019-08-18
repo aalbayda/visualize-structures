@@ -163,8 +163,9 @@ enqueue(head, ${data});
         }
         
     }
-    c.clearRect(head.x, head.y+50, 0, canvas.height);
-    c.clearRect(head.x, head.y+50, 0, canvas.height);
+    c.clearRect(head.x, head.y+50, canvas.width, canvas.height);
+    c.clearRect(head.x, head.y+50, -canvas.width, canvas.height);
+    newTail()
     animateNode();
 }
 
