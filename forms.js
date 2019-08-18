@@ -1,4 +1,4 @@
-setTitle("Linked list");
+setTitle("Stack");
 
 const createForm = (structType) => {
     switch(structType) {
