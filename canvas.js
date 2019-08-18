@@ -71,19 +71,21 @@ class Node { // circular head node
         this.draw = () => {
             c.beginPath();
             c.arc(this.x, this.y, this.r, 0, Math.PI*2, false);
-            c.fillStyle = "#EEE"
+            c.fillStyle = "#729454"
+            c.shadowOffsetX = c.shadowOffsetY = 5;
+            c.shadowBlur = 6;
             c.fill();
             c.stroke();
         }
     }
 }
 
-let head = new Node(canvas.width/2, 200); // Global head
+let head = new Node(canvas.width/2, 150); // Global head
 
 // Head
 const newHead = () => {
     const animateHead = () => {
-        requestAnimationFrame(animateHead);
+        let id = requestAnimationFrame(animateHead);
         if (head.r <= 20) {
             head.update();
         }
@@ -92,10 +94,31 @@ const newHead = () => {
             c.fillStyle = "#000000";
             c.arc(head.x, head.y, 5, 0, Math.PI*2, false);
             c.fill();
-            document.getElementById('btn-push').disabled = false;         
+            document.getElementById('btn-push').disabled = false;  
+            c.font = "16px Helvetica";
+            c.fillText("Head (top)", head.x-100, head.y-20);
+            cancelAnimationFrame(id);
         }
-        // c.font = "12px Helvetica";
-        // c.fillText("Head", head.x-100, head.y-50);
+    }
+    animateHead();
+}
+
+const newTail = () => {
+    const animateHead = () => {
+        let id = requestAnimationFrame(animateHead);
+        if (head.r <= 20) {
+            head.update();
+        }
+        else {          
+            c.beginPath();
+            c.fillStyle = "#000000";
+            c.arc(head.x, head.y, 5, 0, Math.PI*2, false);
+            c.fill();
+            document.getElementById('btn-push').disabled = false;  
+            c.font = "16px Helvetica";
+            c.fillText("Head (top)", head.x-150, head.y-20);
+            cancelAnimationFrame(id);
+        }
     }
     animateHead();
 }
@@ -116,7 +139,7 @@ class Stack {
         this.pop = () => {
             if (this.elements.length == 0)
                 return "Underflow";
-            return this.elements.pop;
+            return this.elements.pop();
         };
         this.peek = () => {
             return this.elements[this.elements.length-1];
@@ -127,9 +150,10 @@ class Stack {
     }
 }
 
-let stack = new Stack();
-
+let stack;
 const newStack = () => {
+    stack = new Stack();
+    stack.push(head);
     c.clearRect(0, 0, canvas.width, canvas.height);
     setTitle("Stack");
     newHead();
@@ -144,6 +168,7 @@ head->next = NULL;
     `;
 }
 const push = (e) => {
+    let data = Math.round((Math.random()*100)+1);
     console.log(stack.isEmpty())
     let node, p;
     if (stack.isEmpty()) {
@@ -157,14 +182,24 @@ void push(NODE* head, int data) {
     newNode->next = head;
     head = newNode;
 }
-push(head, 5);
+push(head, ${data});
 `
     }
     else {
-        stack.peek()
+        node = new Node(stack.peek().x, stack.peek().y+100);
+
+        document.querySelector('textarea').innerHTML = `
+void push(NODE* head, int data) {
+    NODE* newNode =  (NODE*)malloc(sizeof(NODE));
+    newNode->data = data;
+    newNode->next = head;
+    head = newNode;
+}
+push(head, ${data});
+`
     }
     const animatePointer = () => {
-        requestAnimationFrame(animatePointer);
+        let id = requestAnimationFrame(animatePointer);
         if (p.y2 <= node.y-15) {
             console.log(p.y2)
             p.update();
@@ -180,18 +215,23 @@ push(head, 5);
             c.lineTo(p.x2-5*Math.cos(45), p.y2-5*Math.sin(45)); // Left arrowhead
             c.stroke();
             c.closePath();
-            return;
+
+            // Enable pop
+            document.getElementById('btn-pop').disabled = false;
+            cancelAnimationFrame(id);
         }
     }
+
     const animateNode = () => {
-        requestAnimationFrame(animateNode);
+        let id = requestAnimationFrame(animateNode);
         if (node.r <= 20) {
             node.update();
+            document.getElementById('btn-push').disabled = true;
         }
         else {
             c.beginPath();
             c.fillStyle = "#000000";
-            c.arc(head.x, head.y, 5, 0, Math.PI*2, false);
+            c.arc(node.x, node.y, 5, 0, Math.PI*2, false);
             c.fill();
             // Pointer to NULL
             c.beginPath();
@@ -200,21 +240,84 @@ push(head, 5);
             c.fill();
 
             // Pointer to arrow
-            p = new Pointer(head.x, head.y, node.x, node.y-15, "down");
+            p = new Pointer(stack.peek().x, stack.peek().y, node.x, node.y-15, "down");
+
             animatePointer();
-            
-            // Disable pop
-            document.getElementById('btn-pop').disabled = false;
+
+            // Label
+            c.font = "16px Helvetica";
+            c.fillText(`int data = ${data};`, node.x-130, node.y-20);
+            cancelAnimationFrame(id);
+            stack.push(node);
+            document.getElementById('btn-push').disabled = false;
+            if (stack.elements.length == 8)
+                document.getElementById('btn-push').disabled = true;
         }
-        // c.font = "12px Arial";
-        // c.fillText(`int data = ${e};`, node.x-100, node.y-50);
-        stack.push(node);
+        
     }
+    c.clearRect(stack.peek().x, stack.peek().y+50, canvas.width, canvas.height);
+    c.clearRect(stack.peek().x, stack.peek().y+50, -canvas.width, canvas.height);
     animateNode();
 
     
 }
 
+const deleteNode = () => {
+    let r = 1;
+    const animate = () => {
+        let id = requestAnimationFrame(animate);
+        console.log(r)
+        if (r <= 20) {
+            document.getElementById('btn-pop').disabled = true;
+            r += 0.5;
+            c.beginPath();
+            c.arc(stack.peek().x, stack.peek().y, r, 0, Math.PI*2, false);
+            c.fillStyle = "#FF0000";
+            c.fill();
+        }
+        else {
+            // Erase
+            cancelAnimationFrame(id);
+            c.clearRect(stack.peek().x, stack.peek().y, canvas.width, canvas.height);
+            c.clearRect(stack.peek().x, stack.peek().y, -canvas.width, canvas.height);
+            c.clearRect(stack.peek().x, stack.peek().y, -canvas.width, -45);
+            c.clearRect(stack.peek().x, stack.peek().y, canvas.width, -45);
+
+            // New arrowheads
+            let fromX = stack.peek().x, fromY = stack.peek().y;
+            c.beginPath();
+            c.moveTo(fromX, fromY-45);
+            c.lineTo(fromX+5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Right arrowhead
+            c.stroke();
+            c.closePath();
+            c.beginPath();
+            c.moveTo(fromX, fromY-45);
+            c.lineTo(fromX-5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Left arrowhead
+            c.stroke();
+            c.closePath();
+
+            // "NULL"
+            c.fillText("NULL", fromX-10, fromY-30);
+
+            stack.pop();
+
+            if (stack.elements.length > 1)
+                document.getElementById('btn-pop').disabled = false;
+        }
+    }
+    animate();
+}
+
 const pop = () => {
-    c.clearRect(0, 0, canvas.width, canvas.height);
+    deleteNode();
+    document.querySelector('textarea').innerHTML = `
+int pop(NODE** head) {
+    STACK* temp = *head; 
+    *head = (*head)->next; 
+    int data = temp->data; 
+    free(temp); 
+    return data; 
+} 
+pop(&head);
+`
 }
