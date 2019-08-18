@@ -1,0 +1,30 @@
+body {
+    background: url('https://images.unsplash.com/photo-1491669471635-91c11bbdb596?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1267&q=80') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+.card {
+    min-height: 200px;
+    margin: 1%;
+}
+
+textarea.form-control {
+    font-size: 12px;
+}
+
+canvas {
+    /* margin-left: auto;
+    margin-right: auto;
+    display: block; */
+    width: 100%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    background-color: #EEE;
+    border: .5px solid lightgrey;
+    border-radius: 5px;
+}
+
+/*# sourceMappingURL=/style.e308ff8e.css.map */

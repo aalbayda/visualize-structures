@@ -1,0 +1,27 @@
+{
+  "name": "visualize-structures",
+  "version": "1.0.0",
+  "description": "",
+  "main": "canvas.js",
+  "dependencies": {
+    "canvas": "^2.6.0",
+    "set-default-browser": "^1.0.1"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bobschiffer/visualize-structures.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bobschiffer/visualize-structures/issues"
+  },
+  "homepage": "https://github.com/bobschiffer/visualize-structures#readme"
+}

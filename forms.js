@@ -17,7 +17,7 @@ const createForm = (structType) => {
                     <div class="row">
                         <input class="btn btn-dark col-sm" type="button" value="New stack" onclick="newStack()">
                         <input class="btn btn-dark col-sm" type="button" value="Push" id="btn-push" onclick="push()">
-                        <input class="btn btn-dark col-sm" type="button" value="Pop" id="btn-pop" onclick="deleteTop()">
+                        <input class="btn btn-dark col-sm" type="button" value="Pop" id="btn-pop" onclick="pop()">
                     </div>
                 </div>
                 `;
@@ -26,8 +26,8 @@ const createForm = (structType) => {
                 <div class="form-group" style="margin-top: 5%">
                 <div class="row">
                     <input class="btn btn-dark col-sm" type="button" value="New queue" onclick="newQueue()">
-                    <input class="btn btn-dark col-sm" type="button" value="Enqueue" id="btn-enqueue" onclick="enqueue()" disabled>
-                    <input class="btn btn-dark col-sm" type="button" value="Dequeue" id="btn-dequeue" onclick="dequeue()" disabled>
+                    <input class="btn btn-dark col-sm" type="button" value="Enqueue" id="btn-push" onclick="enqueue()" disabled>
+                    <input class="btn btn-dark col-sm" type="button" value="Dequeue" id="btn-pop" onclick="dequeue()" disabled>
                 </div>
                 </div>
                 `;
