@@ -122,9 +122,9 @@ const newArrowhead = (p, direction) => {
         c.lineTo(p.x2+5*Math.cos(45), p.y2+5*Math.sin(45)); 
     else if (direction == "right")
         c.lineTo(p.x2-5*Math.cos(45), p.y2-5*Math.sin(45)); 
-    else if (direction == "up")
-        c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); 
     else if (direction == "down")
+        c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); 
+    else if (direction == "up")
         c.lineTo(p.x2-5*Math.cos(45), p.y2+5*Math.sin(45));   
     c.stroke();
     c.closePath();
@@ -136,9 +136,9 @@ const newArrowhead = (p, direction) => {
         c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); 
     else if (direction == "right")
         c.lineTo(p.x2-5*Math.cos(45), p.y2+5*Math.sin(45)); 
-    else if (direction == "up")
-        c.lineTo(p.x2-5*Math.cos(45), p.y2-5*Math.sin(45)); 
     else if (direction == "down")
+        c.lineTo(p.x2-5*Math.cos(45), p.y2-5*Math.sin(45)); 
+    else if (direction == "up")
         c.lineTo(p.x2+5*Math.cos(45), p.y2+5*Math.sin(45));   
         c.stroke();
     c.closePath();

@@ -30,8 +30,8 @@ const newQueue = () => {
     c.clearRect(0, 0, canvas.width, canvas.height);
     setTitle("Queue");
     // Create head and tail nodes
-    head = newNode(canvas.width-200, canvas.height/2);
-    tail = newNode(canvas.width-300, canvas.height/2+100);
+    head = newNode(canvas.width-200, 200);
+    tail = newNode(head.x, head.y+100);
     // Label
     c.fillStyle = "#000"
     c.font = "16px Helvetica";
@@ -69,19 +69,24 @@ const enqueue = (e) => {
 
     // New pointer from tail
     setTimeout(() => {
-        if (queue.isEmpty())
-            pTail = newPointer(tail.x, tail.y, node.x, node.y, "up");
-        else {
+        if (!queue.isEmpty()) {
             c.clearRect(tail.x, tail.y, canvas.width, canvas.height);
             c.clearRect(tail.x, tail.y, -canvas.width, canvas.height);
-            c.clearRect(tail.x, tail.y, canvas.width, -40);
-            c.clearRect(tail.x, tail.y, -canvas.width, -40);
+            c.clearRect(tail.x, tail.y, canvas.width, -70);
+            c.clearRect(tail.x, tail.y, -canvas.width, -70);
             moveNode(tail, "left");
+            c.font = "16px Helvetica";
+            c.fillStyle = "#000"
+            // New text and new pointer
+            setTimeout(() => {
+                c.fillText("Tail (rear)", tail.x+40, tail.y);  
+                pTail = newPointer(tail.x, tail.y, node.x, node.y, "up");
+            }, 500)
         }
     }, 550)
 
     // Re-enable push
-    setTimeout(()=>{if (queue.elements.length < 10) disablePush(false)}, 600);
+    setTimeout(()=>{if (node.x-100 > 0) disablePush(false)}, 600);
 
     // Label
     c.font = "14px Helvetica";
