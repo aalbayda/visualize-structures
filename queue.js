@@ -30,8 +30,8 @@ const newQueue = () => {
     c.clearRect(0, 0, canvas.width, canvas.height);
     setTitle("Queue");
     // Create head and tail nodes
-    head = newNode(canvas.width-200, canvas.height/2);
-    tail = newNode(200, canvas.height/2);
+    head = newNode(canvas.width-200, 200);
+    tail = newNode(canvas.width-300, head.y+100);
     // Label
     c.fillStyle = "#000"
     c.font = "16px Helvetica";
@@ -50,7 +50,7 @@ const newQueue = () => {
 const enqueue = (e) => {
     // Initialize
     let data = Math.round((Math.random()*100)+1); // Random data inside new node
-    let node, p, p1; // Node and pointer declarations
+    let node, p, pTail; // Node, pointer from previous node, and pointer from tail
     textEnqueue(data); // Update code snippet
     
     // New node
@@ -61,12 +61,27 @@ const enqueue = (e) => {
         node = newNode(queue.getRear().x-100, queue.getRear().y); // If queue is not empty, start from tail
     }
     
+    // New pointer from previous node
     let prev = queue.isEmpty()?head:queue.getRear();
     setTimeout(() => {
-        // New pointer from previous node
         p = newPointer(prev.x, prev.y, node.x, node.y, "left");     
-        if (queue.elements.length < 10) disablePush(false)
     }, 500);
+
+    // New pointer from tail
+    setTimeout(() => {
+        if (queue.isEmpty())
+            pTail = newPointer(tail.x, tail.y, node.x, node.y, "up");
+        else {
+            c.clearRect(tail.x, tail.y, canvas.width, canvas.height);
+            c.clearRect(tail.x, tail.y, -canvas.width, canvas.height);
+            c.clearRect(tail.x, tail.y, canvas.width, -40);
+            c.clearRect(tail.x, tail.y, -canvas.width, -40);
+            moveNode(tail, "left");
+        }
+    }, 550)
+
+    // Re-enable push
+    setTimeout(()=>{if (queue.elements.length < 10) disablePush(false)}, 600);
 
     // Label
     c.font = "14px Helvetica";

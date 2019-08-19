@@ -52,20 +52,24 @@ class Node { // circular head node
         this.y = y;
         this.r = 0; // Radius
         this.update = () => {
-            this.r += 1;
+            this.r += 5;
             this.draw();
         }
         this.moveUp = () => {
-            this.y -=1;
+            this.y -=5;
+            this.draw();
         }
         this.moveDown = () => {
-            this.y += 1;
+            this.y += 5;
+            this.draw();
         }
         this.moveLeft = () => {
-            this.x -= 1;
+            this.x -= 5;
+            this.draw();
         }
         this.moveRight = () => {
-            this.x += 1;
+            this.x += 5;
+            this.draw();
         }
         this.draw = () => {
             c.beginPath();
@@ -73,6 +77,13 @@ class Node { // circular head node
             c.fillStyle = "#729454"
             c.fill();
             c.stroke();
+            c.closePath();
+
+            // Draw pointer in the middle        
+            c.beginPath();
+            c.fillStyle = "#000000";
+            c.arc(this.x, this.y, 5, 0, Math.PI*2, false);
+            c.fill();
         }
     }
 }
@@ -94,12 +105,6 @@ const newNode = (x, y) => {
         }
         else {  
             cancelAnimationFrame(id);
-
-            // Draw pointer in the middle        
-            c.beginPath();
-            c.fillStyle = "#000000";
-            c.arc(node.x, node.y, 5, 0, Math.PI*2, false);
-            c.fill();
         }
     }
     animateNode();
@@ -109,43 +114,33 @@ const newNode = (x, y) => {
 
 // New pointer + animation + arrowhead
 const newArrowhead = (p, direction) => {
-    c.fillStyle = "#000"
-    let x, y;
+    c.strokeStyle = "#000"
     // Right arrowhead
-    if (direction == "left") { // QI
-        x = y = 5;
-    }
-    else if (direction == "right") { // QIII
-        x = y = -5;
-    }
-    else if (direction == "down") { // QII
-        x = -5; y = 5;
-    }
-    else if (direction == "up") { // QIV
-        x = 5; y = -5;
-    }
     c.beginPath();
     c.moveTo(p.x2, p.y2);
-    c.lineTo(p.x2+x*Math.cos(45), p.y2+y*Math.sin(45)); 
+    if (direction == "left")
+        c.lineTo(p.x2+5*Math.cos(45), p.y2+5*Math.sin(45)); 
+    else if (direction == "right")
+        c.lineTo(p.x2-5*Math.cos(45), p.y2-5*Math.sin(45)); 
+    else if (direction == "up")
+        c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); 
+    else if (direction == "down")
+        c.lineTo(p.x2-5*Math.cos(45), p.y2+5*Math.sin(45));   
     c.stroke();
     c.closePath();
+
     // Left arrowhead
-    if (direction == "left") { // QIV
-        x = 5; y = -5;
-    }
-    else if (direction == "right") { // QII
-        x = -5; y = 5;
-    }
-    else if (direction == "down") { // QI
-        x = y = 5;
-    }
-    else if (direction == "up") { // QIII
-        x = y = -5;
-    }
     c.beginPath();
     c.moveTo(p.x2, p.y2);
-    c.lineTo(p.x2+x*Math.cos(45), p.y2+y*Math.sin(45)); 
-    c.stroke();
+    if (direction == "left")
+        c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); 
+    else if (direction == "right")
+        c.lineTo(p.x2-5*Math.cos(45), p.y2+5*Math.sin(45)); 
+    else if (direction == "up")
+        c.lineTo(p.x2-5*Math.cos(45), p.y2-5*Math.sin(45)); 
+    else if (direction == "down")
+        c.lineTo(p.x2+5*Math.cos(45), p.y2+5*Math.sin(45));   
+        c.stroke();
     c.closePath();
 }
 const newPointer = (x1, y1, x2, y2, direction) => {
@@ -154,28 +149,52 @@ const newPointer = (x1, y1, x2, y2, direction) => {
         let id = requestAnimationFrame(animatePointer);
         if (direction == "left" || direction == "right") {
             let length = (direction=="left"?-31:31);
-            if (p.x2+length >= x2) {
+            if (direction == "left" && p.x2+length >= x2)
                 p.update();
-            }
+            else if (direction == "right" && p.x2+length <= x2)
+                p.update();
             else {
-                newArrowhead(p, direction);
                 cancelAnimationFrame(id);
+                newArrowhead(p, direction);  
             }
         }
-        else {
-            let length = (direction=="down"?-31:31);
-            if (p.y2+length >= x2) {
+        else if (direction == "up" || direction == "down") {
+            let length = (direction=="down"?31:-31);
+            if (direction == "down" && p.y2+length <= y2)
                 p.update();
-            }
+            else if (direction == "up" && p.y2+length >= y2)
+                p.update();
             else {
-                newArrowhead(p, direction);
                 cancelAnimationFrame(id);
+                newArrowhead(p, direction);
             }
         }
     }
     animatePointer();
 }
 
+const moveNode = (node, direction) => {
+    let x = node.x;
+    let y = node.y;
+    console.log(direction)
+    const animateNode = () => {
+        let id = requestAnimationFrame(animateNode);
+        if (direction == "left") {
+            if (node.x > x-100) {
+                console.log(node.x)
+                c.clearRect(tail.x, tail.y, canvas.width, canvas.height);
+                c.clearRect(tail.x, tail.y, -canvas.width, canvas.height);
+                c.clearRect(tail.x, tail.y, canvas.width, -30);
+                c.clearRect(tail.x, tail.y, -canvas.width, -30);
+                node.moveLeft();
+            }
+            else {
+                cancelAnimationFrame(id);
+            }
+        }
+    }
+    animateNode();
+}
 
 // ADT title
 const setTitle = (structType) => {
