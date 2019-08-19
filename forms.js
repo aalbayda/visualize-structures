@@ -1,4 +1,10 @@
-setTitle("Stack");
+const disablePush = (disabled) => {
+    document.getElementById('btn-push').disabled = disabled;
+}
+
+const disablePop = (disabled) => {
+    document.getElementById('btn-pop').disabled = disabled;
+}
 
 const createForm = (structType) => {
     switch(structType) {

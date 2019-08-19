@@ -1,4 +1,5 @@
 /* QUEUES */
+// Constructor
 class Queue {
     constructor() {
         this.elements = [];
@@ -9,148 +10,73 @@ class Queue {
             return this.elements.pop();
         };
         this.getFront = () => {
-            return this.elements[0];
+            return this.elements[this.elements.length-1];
         };
         this.getRear = () => {
-            return this.elements[this.elements.length-1];
+            return this.elements[0];
         }
         this.isEmpty = () => {
-            return this.elements.length == 1;
+            return this.elements.length == 0; 
         };
     }
 }
 
-// Tail
-let tail = new Node(200, canvas.height/2)
-const newTail = () => {
-    tail.r = 0;
-    const animateHead = () => {
-        let id = requestAnimationFrame(animateHead);
-        if (tail.r <= 20) {
-            tail.update();
-        }
-        else {          
-            c.beginPath();
-            c.fillStyle = "#000000";
-            c.arc(tail.x, tail.y, 5, 0, Math.PI*2, false);
-            c.fill();
-            document.getElementById('btn-push').disabled = false;  
-            c.font = "16px Helvetica";
-            c.fillText("Tail (rear)", tail.x-100, tail.y-20);
-            cancelAnimationFrame(id);
-        }
-    }
-    animateHead();
-}
-
+// New queue
 let queue;
 const newQueue = () => {
+    // New queue
     queue = new Queue();
-    queue.enqueue(head);
+    // Restart canvas
     c.clearRect(0, 0, canvas.width, canvas.height);
     setTitle("Queue");
-    newHead(canvas.width-200, canvas.height/2);
-    newTail(); 
-    document.querySelector('textarea').innerHTML = 
-`typedef struct Node {
-    int data;
-    struct Node* next;
-} NODE;
-
-typedef struct Queue {
-    NODE* head, tail;
-    int length, maxlength;
-} QUEUE;
-
-QUEUE* queue = (QUEUE*)malloc(sizeof(QUEUE));
-`;
+    // Create head and tail nodes
+    head = newNode(canvas.width-200, canvas.height/2);
+    tail = newNode(200, canvas.height/2);
+    // Label
+    c.fillStyle = "#000"
+    c.font = "16px Helvetica";
+    c.fillText("Head (front)", head.x+30, head.y-20);
+    c.font = "16px Helvetica";
+    c.fillText("Tail (rear)", tail.x-100, tail.y-20);
+    // Update code snippet
+    textNewQueue();
+    // Re-enable push
+    setTimeout(()=>{
+        disablePush(false);
+        disablePop(false);
+    }, 500)
 }
 
 const enqueue = (e) => {
-    let data = Math.round((Math.random()*100)+1);
-    let node, p;
-    console.log(queue.isEmpty())
-    document.querySelector('textarea').innerHTML = 
-`void enqueue(QUEUE* queue, int data) {
-    NODE* newNode =  (NODE*)malloc(sizeof(NODE));
-    newNode->data = data;
-    newNode->next = NULL;
-    queue->tail->next = newNode;
-    queue->tail = newNode;
-}
-
-enqueue(queue, ${data});
-`;
+    // Initialize
+    let data = Math.round((Math.random()*100)+1); // Random data inside new node
+    let node, p, p1; // Node and pointer declarations
+    textEnqueue(data); // Update code snippet
+    
+    // New node
     if (queue.isEmpty()) {
-        node = new Node(head.x-100, head.y);
-        document.getElementById('btn-push').disabled = false;
+        node = newNode(head.x-100, head.y); // If queue is empty, start from head
     }
     else {
-        node = new Node(queue.getFront().x-100, queue.getFront().y);
+        node = newNode(queue.getRear().x-100, queue.getRear().y); // If queue is not empty, start from tail
     }
-    const animatePointer = () => {
-        let id = requestAnimationFrame(animatePointer);
-        if (p.x2-15 > node.x) {
-            console.log(p.x2)
-            p.update();
-        }
-        else {
-            c.beginPath();
-            c.moveTo(p.x2, p.y2);
-            c.lineTo(p.x2+5*Math.cos(45), p.y2+5*Math.sin(45)); // Right arrowhead
-            c.stroke();
-            c.closePath();
-            c.beginPath();
-            c.moveTo(p.x2, p.y2);
-            c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); // Left arrowhead
-            c.stroke();
-            c.closePath();
-
-            // Enable pop
-            document.getElementById('btn-pop').disabled = false;
-            cancelAnimationFrame(id);
-        }
-    }
-    let prev = (!queue.isEmpty()?queue.getFront():head);
-    const animateNode = () => {
-        let id = requestAnimationFrame(animateNode);
-        if (node.r <= 20) {
-            node.update();
-            document.getElementById('btn-push').disabled = true;
-        }
-        else {
-            c.beginPath();
-            c.fillStyle = "#000000";
-            c.arc(node.x, node.y, 5, 0, Math.PI*2, false);
-            c.fill();
-            // Pointer to NULL
-            c.beginPath();
-            c.fillStyle = "#000000";
-            c.arc(node.x, node.y, 5, 0, Math.PI*2, false);
-            c.fill();
-
-            // Pointer to arrow
-            p = new Pointer(prev.x, prev.y, node.x-15, node.y, "left");
-            
-
-            animatePointer();
-
-            // Label
-            c.font = "14px Helvetica";
-            c.fillText(`int data = ${data};`, node.x-30, node.y-40);
-            cancelAnimationFrame(id);
-            queue.enqueue(node);
-            document.getElementById('btn-push').disabled = false;
-            if (queue.elements.length == 9)
-                document.getElementById('btn-push').disabled = true;
-        }
-        
-    }
-    c.clearRect(prev.x, prev.y+50, canvas.width, canvas.height);
-    c.clearRect(prev.x, prev.y+50, -canvas.width, canvas.height);
     
-    animateNode();
+    let prev = queue.isEmpty()?head:queue.getRear();
+    setTimeout(() => {
+        // New pointer from previous node
+        p = newPointer(prev.x, prev.y, node.x, node.y, "left");     
+        if (queue.elements.length < 10) disablePush(false)
+    }, 500);
+
+    // Label
+    c.font = "14px Helvetica";
+    c.fillStyle = "#000";
+    c.fillText(`int data = ${data};`, node.x-30, node.y-40); 
+
+    // Enqueue in our actual (backend) queue
+    queue.enqueue(node);
 }
+
 const dequeueNode = () => {
     let r = 1;
     let prev = (queue.isEmpty()?head:queue.getFront());
