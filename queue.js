@@ -21,7 +21,7 @@ class Queue {
 }
 
 // Tail
-let tail = new Node(head.x-100, head.y+100)
+let tail = new Node(200, canvas.height/2)
 const newTail = () => {
     tail.r = 0;
     const animateHead = () => {
@@ -49,78 +49,60 @@ const newQueue = () => {
     queue.enqueue(head);
     c.clearRect(0, 0, canvas.width, canvas.height);
     setTitle("Queue");
-    newHead();
-    newTail();
+    newHead(canvas.width-200, canvas.height/2);
+    newTail(); 
     document.querySelector('textarea').innerHTML = 
 `typedef struct Node {
     int data;
-    struct* next;
+    struct Node* next;
 } NODE;
 
-NODE* head = (NODE*)malloc(sizeof(NODE));
-NODE* tail = (NODE*)malloc(sizeof(NODE));
-head = tail = NULL;
-    `;
+typedef struct Queue {
+    NODE* head, tail;
+    int length, maxlength;
+} QUEUE;
+
+QUEUE* queue = (QUEUE*)malloc(sizeof(QUEUE));
+`;
 }
 
 const enqueue = (e) => {
-    let prev = queue.isEmpty()?head:queue.getFront();
     let data = Math.round((Math.random()*100)+1);
-    let node, p, p1;
+    let node, p;
     console.log(queue.isEmpty())
-    if (queue.isEmpty()) {
-        node = new Node(head.x, head.y+100);
-        document.getElementById('btn-push').disabled = false;
-        document.querySelector('textarea').innerHTML = `
-void enqueue(NODE* head, int data) {
+    document.querySelector('textarea').innerHTML = 
+`void enqueue(QUEUE* queue, int data) {
     NODE* newNode =  (NODE*)malloc(sizeof(NODE));
     newNode->data = data;
-    head = tail = newNode;
+    newNode->next = NULL;
+    queue->tail->next = newNode;
+    queue->tail = newNode;
 }
-enqueue(head, ${data});
-`
+
+enqueue(queue, ${data});
+`;
+    if (queue.isEmpty()) {
+        node = new Node(head.x-100, head.y);
+        document.getElementById('btn-push').disabled = false;
     }
     else {
-        //node = new Node(queue.getFront().x, queue.getFront().y+100);
-//         document.querySelector('textarea').innerHTML = `
-// void push(NODE* head, int data) {
-//     NODE* newNode =  (NODE*)malloc(sizeof(NODE));
-//     newNode->data = data;
-//     newNode->next = head;
-//     head = newNode;
-// }
-// push(head, ${data});
-// `
+        node = new Node(queue.getFront().x-100, queue.getFront().y);
     }
     const animatePointer = () => {
         let id = requestAnimationFrame(animatePointer);
-        if (p.y2 <= node.y-15) {
-            console.log(p.y2)
+        if (p.x2-15 > node.x) {
+            console.log(p.x2)
             p.update();
-            p1.update();
         }
         else {
-            // Arrowheads from head pointer
             c.beginPath();
             c.moveTo(p.x2, p.y2);
-            c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); // Right arrowhead
+            c.lineTo(p.x2+5*Math.cos(45), p.y2+5*Math.sin(45)); // Right arrowhead
             c.stroke();
             c.closePath();
             c.beginPath();
             c.moveTo(p.x2, p.y2);
-            c.lineTo(p.x2-5*Math.cos(45), p.y2-5*Math.sin(45)); // Left arrowhead
-            c.stroke();
-            c.closePath();
-
-            // Arrowheads from tail pointer
-            c.beginPath();
-            c.moveTo(p1.x2, p1.y2);
-            c.lineTo(p1.x2-5*Math.cos(45), p1.y2-5*Math.sin(45)); // Right arrowhead
-            c.stroke();
-            c.closePath();
-            c.beginPath();
-            c.moveTo(p1.x2, p1.y2);
-            c.lineTo(p1.x2-5*Math.cos(45), p1.y2+5*Math.sin(45)); // Left arrowhead
+            c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); // Left arrowhead
             c.stroke();
             c.closePath();
 
@@ -129,7 +111,7 @@ enqueue(head, ${data});
             cancelAnimationFrame(id);
         }
     }
-
+    let prev = (!queue.isEmpty()?queue.getFront():head);
     const animateNode = () => {
         let id = requestAnimationFrame(animateNode);
         if (node.r <= 20) {
@@ -148,27 +130,27 @@ enqueue(head, ${data});
             c.fill();
 
             // Pointer to arrow
-            p = new Pointer(queue.getFront().x, queue.getFront().y, node.x, node.y-15, "down"); // Pointer from head
-            p1 = new Pointer(tail.x, tail.y, node.x-15, node.y, "right"); // Pointer from tail
+            p = new Pointer(prev.x, prev.y, node.x-15, node.y, "left");
+            
+
             animatePointer();
 
             // Label
-            c.font = "16px Helvetica";
-            c.fillText(`int data = ${data};`, node.x+30, node.y-20);
+            c.font = "14px Helvetica";
+            c.fillText(`int data = ${data};`, node.x-30, node.y-40);
             cancelAnimationFrame(id);
             queue.enqueue(node);
             document.getElementById('btn-push').disabled = false;
-            if (queue.elements.length == 8)
+            if (queue.elements.length == 9)
                 document.getElementById('btn-push').disabled = true;
         }
         
     }
-    c.clearRect(head.x, head.y+50, canvas.width, canvas.height);
-    c.clearRect(head.x, head.y+50, -canvas.width, canvas.height);
-    newTail()
+    c.clearRect(prev.x, prev.y+50, canvas.width, canvas.height);
+    c.clearRect(prev.x, prev.y+50, -canvas.width, canvas.height);
+    
     animateNode();
 }
-
 const dequeueNode = () => {
     let r = 1;
     let prev = (queue.isEmpty()?head:queue.getFront());

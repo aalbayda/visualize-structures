@@ -23,7 +23,7 @@ const newStack = () => {
     stack = new Stack();
     c.clearRect(0, 0, canvas.width, canvas.height);
     setTitle("Stack");
-    newHead();
+    newHead(canvas.width/2, 150);
     document.querySelector('textarea').innerHTML = 
 `typedef struct Node {
     int data;

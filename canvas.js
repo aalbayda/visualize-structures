@@ -23,7 +23,6 @@ class Pointer {
         else {
             this.y2 = y2;
         }
-        console.log("Initial y2 is "+this.y2)
         this.update = () => {
             if (this.direction == "right")
                 this.x2 += 10;
@@ -78,10 +77,11 @@ class Node { // circular head node
     }
 }
 
-let head = new Node(canvas.width/2, 150); // Global head
+let head;  // Global head variable
 
 // Head
-const newHead = () => {
+const newHead = (x, y) => {
+    head = new Node(x, y);
     head.r = 0;
     const animateHead = () => {
         let id = requestAnimationFrame(animateHead);
@@ -95,7 +95,7 @@ const newHead = () => {
             c.fill();
             document.getElementById('btn-push').disabled = false;  
             c.font = "16px Helvetica";
-            c.fillText("Head (top)", head.x-100, head.y-20);
+            c.fillText("Head (top)", head.x+30, head.y-20);
             cancelAnimationFrame(id);
         }
     }
