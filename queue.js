@@ -30,8 +30,8 @@ const newQueue = () => {
     c.clearRect(0, 0, canvas.width, canvas.height);
     setTitle("Queue");
     // Create head and tail nodes
-    head = newNode(canvas.width-200, 200);
-    tail = newNode(canvas.width-300, head.y+100);
+    head = newNode(canvas.width-200, canvas.height/2);
+    tail = newNode(canvas.width-300, canvas.height/2+100);
     // Label
     c.fillStyle = "#000"
     c.font = "16px Helvetica";
