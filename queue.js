@@ -43,7 +43,6 @@ const newQueue = () => {
     // Re-enable push
     setTimeout(()=>{
         disablePush(false);
-        disablePop(false);
     }, 500)
 }
 
@@ -55,10 +54,10 @@ const enqueue = (e) => {
     
     // New node
     if (queue.isEmpty()) {
-        node = newNode(head.x-100, head.y); // If queue is empty, start from head
+        node = newNode(head.x-100, head.y, data); // If queue is empty, start from head
     }
     else {
-        node = newNode(queue.getRear().x-100, queue.getRear().y); // If queue is not empty, start from tail
+        node = newNode(queue.getRear().x-100, queue.getRear().y, data); // If queue is not empty, start from tail
     }
     
     // New pointer from previous node
@@ -86,7 +85,10 @@ const enqueue = (e) => {
     }, 550)
 
     // Re-enable push
-    setTimeout(()=>{if (node.x-100 > 0) disablePush(false)}, 600);
+    setTimeout(()=>{
+        if (node.x-100 > 0) disablePush(false);
+        disablePop(false);
+    }, 600);
 
     // Label
     c.font = "14px Helvetica";
@@ -97,82 +99,47 @@ const enqueue = (e) => {
     queue.enqueue(node);
 }
 
-const dequeueNode = () => {
-    let r = 1;
-    let prev = (queue.isEmpty()?head:queue.getFront());
-    const animate = () => {
-        let id = requestAnimationFrame(animate);
-        console.log(r)
-        if (r <= 20) {
-            document.getElementById('btn-pop').disabled = true;
-            r += 0.9;
-            c.beginPath();
-            c.arc(prev.x, prev.y, r, 0, Math.PI*2, false);
-            c.fillStyle = "#FF0000";
-            c.fill();
-        }
-        else {
-            // Erase
-            cancelAnimationFrame(id);
-            console.log(prev.y==head.y)
-            c.clearRect(prev.x, prev.y, canvas.width, canvas.height);
-            c.clearRect(prev.x, prev.y, -canvas.width, canvas.height);
-            c.clearRect(prev.x, prev.y, -canvas.width, -45);
-            c.clearRect(prev.x, prev.y, canvas.width, -45);
-
-            // Arrowhead from head
-            let fromX = prev.x, fromY = prev.y;
-            c.beginPath();
-            c.moveTo(fromX, fromY-45);
-            c.lineTo(fromX+5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Right arrowhead
-            c.stroke();
-            c.closePath();
-            c.beginPath();
-            c.moveTo(fromX, fromY-45);
-            c.lineTo(fromX-5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Left arrowhead
-            c.stroke();
-            c.closePath();
-
-            
-            // Arrowhead from tail
-            // c.beginPath();
-            // c.moveTo(tail.x+45, tail.y);
-            // c.lineTo((tail.x+45)-5*Math.cos(45), tail.y-5*Math.sin(45)); // Right arrowhead
-            // c.stroke();
-            // c.closePath();
-            // c.beginPath();
-            // c.moveTo(tail.x+45, tail.y-45);
-            // c.lineTo((tail.x+45)-5*Math.cos(45), tail.y+5*Math.sin(45)); // Left arrowhead
-            // c.stroke();
-            // c.closePath();
-
-            // "NULL"
-            c.fillText("NULL", fromX-10, fromY-30);
-
-            newTail();
-            queue.dequeue();
-
-            if (!queue.isEmpty())
-                document.getElementById('btn-pop').disabled = false;
-
-            c.fillStyle = "#000"
-        }
-    }
-    animate();
-}
-
 const dequeue = () => {
-    dequeueNode();
-    document.querySelector('textarea').innerHTML = 
-`int dequeue(NODE** head) {
-    STACK* temp = *head; 
-    *head = (*head)->next; 
-    int data = temp->data; 
-    free(temp); 
-    return data; 
-} 
-pop(&head);
-`
-    if (queue.isEmpty())
-        document.getElementById('btn-push').disabled = false;
+    if (queue.elements.length == 1) {
+        animateDelete(queue.getRear());
+        setTimeout(() => {
+            c.clearRect(0, 0, head.x+20, canvas.height);
+            setTitle("Queue");
+            head.draw();
+            tail.draw();
+        }, 400);
+        queue.dequeue();
+    }
+    else {
+        animateDelete(queue.getFront());
+        setTimeout(() => {
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            setTitle("Queue");
+            head.draw();
+            tail.draw();
+            queue.dequeue();
+            for (let i = 0; i < queue.elements.length; i++) {
+                queue.elements[i].draw();
+                moveNode(queue.elements[i], "right");
+            }
+        }, 400);
+    }
+
+    setTimeout(() => {    
+        // Move tail right
+        moveNode(tail, "right");
+
+        setTimeout(() => {
+             // Re-do label
+            c.fillStyle = "#000"
+            c.font = "16px Helvetica";
+            c.fillText("Head (front)", head.x+30, head.y-20);
+            c.font = "16px Helvetica";
+            c.fillText("Tail (rear)", tail.x-100, tail.y-20);
+            
+        }, 500)
+
+    }, 500);
+
+    
 }

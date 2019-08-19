@@ -47,9 +47,10 @@ class Pointer {
 
 // Node
 class Node { // circular head node
-    constructor(x, y) {
+    constructor(x, y, data) {
         this.x = x;
         this.y = y;
+        this.data = data;
         this.r = 0; // Radius
         this.update = () => {
             this.r += 5;
@@ -81,8 +82,8 @@ class Node { // circular head node
 
             // Draw pointer in the middle        
             c.beginPath();
-            c.fillStyle = "#000000";
             c.arc(this.x, this.y, 5, 0, Math.PI*2, false);
+            c.fillStyle = "#000";
             c.fill();
         }
     }
@@ -93,8 +94,8 @@ class Node { // circular head node
 let head, tail;
 
 // New node + animation
-const newNode = (x, y) => {
-    let node = new Node(x, y);
+const newNode = (x, y, data) => {
+    let node = new Node(x, y, data);
     node.r = 0;
     const animateNode = () => {
         let id = requestAnimationFrame(animateNode);
@@ -173,6 +174,7 @@ const newPointer = (x1, y1, x2, y2, direction) => {
     animatePointer();
 }
 
+// Move node
 const moveNode = (node, direction) => {
     let x = node.x;
     let y = node.y;
@@ -181,20 +183,47 @@ const moveNode = (node, direction) => {
         let id = requestAnimationFrame(animateNode);
         if (direction == "left") {
             if (node.x > x-100) {
-                console.log(node.x)
-                c.clearRect(tail.x, tail.y, canvas.width, canvas.height);
-                c.clearRect(tail.x, tail.y, -canvas.width, canvas.height);
-                c.clearRect(tail.x, tail.y, canvas.width, -30);
-                c.clearRect(tail.x, tail.y, -canvas.width, -30);
+                c.clearRect(node.x, node.y, canvas.width, canvas.height);
+                c.clearRect(node.x, node.y, -canvas.width, canvas.height);
+                c.clearRect(node.x, node.y, canvas.width, -30);
+                c.clearRect(node.x, node.y, -canvas.width, -30);
                 node.moveLeft();
             }
             else {
                 cancelAnimationFrame(id);
             }
         }
+        else if (direction == "right") {
+            if (node.x < x + 100) {
+                c.clearRect(node.x, node.y, canvas.width, canvas.height);
+                c.clearRect(node.x, node.y, -canvas.width, canvas.height);
+                c.clearRect(node.x, node.y, canvas.width, -30);
+                c.clearRect(node.x, node.y, -canvas.width, -30);
+                node.moveRight();
+            }
+        }
     }
     animateNode();
 }
+
+
+// Animation for node about to be removed
+const animateDelete = (node) => {
+    let r = 0;
+    const animate = () => {
+        let id = requestAnimationFrame(animate);
+        if (r < node.r) {
+            r += 1;
+            c.beginPath();
+            c.fillStyle = "#FF0000";
+            c.arc(node.x, node.y, r, 0, 2*Math.PI, false);
+            c.fill();
+        }
+        else cancelAnimationFrame(id);
+    }
+    animate();
+}
+
 
 // ADT title
 const setTitle = (structType) => {
@@ -203,51 +232,3 @@ const setTitle = (structType) => {
     c.fillText(structType, canvas.width/2, 80);
 } 
 setTitle("Stack");
-
-// const popNode = () => {
-//     let r = 1;
-//     const animate = () => {
-//         let id = requestAnimationFrame(animate);
-//         console.log(r)
-//         if (r <= 20) {
-//             document.getElementById('btn-pop').disabled = true;
-//             r += 0.9;
-//             c.beginPath();
-//             c.arc(stack.peek().x, stack.peek().y, r, 0, Math.PI*2, false);
-//             c.fillStyle = "#FF0000";
-//             c.fill();
-//         }
-//         else {
-//             // Erase
-//             cancelAnimationFrame(id);
-//             c.clearRect(stack.peek().x, stack.peek().y, canvas.width, canvas.height);
-//             c.clearRect(stack.peek().x, stack.peek().y, -canvas.width, canvas.height);
-//             c.clearRect(stack.peek().x, stack.peek().y, -canvas.width, -45);
-//             c.clearRect(stack.peek().x, stack.peek().y, canvas.width, -45);
-
-//             // New arrowheads
-//             let fromX = stack.peek().x, fromY = stack.peek().y;
-//             c.beginPath();
-//             c.moveTo(fromX, fromY-45);
-//             c.lineTo(fromX+5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Right arrowhead
-//             c.stroke();
-//             c.closePath();
-//             c.beginPath();
-//             c.moveTo(fromX, fromY-45);
-//             c.lineTo(fromX-5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Left arrowhead
-//             c.stroke();
-//             c.closePath();
-
-//             // "NULL"
-//             c.fillText("NULL", fromX-10, fromY-30);
-
-//             stack.pop();
-
-//             if (stack.elements.length > 0)
-//                 document.getElementById('btn-pop').disabled = false;
-
-//             c.fillStyle = "#000"
-//         }
-//     }
-//     animate();
-// }
