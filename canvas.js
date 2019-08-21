@@ -1,7 +1,7 @@
 // Initialize canvas
 let canvas = document.querySelector('canvas');
-canvas.width = window.innerWidth-200;
-canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight-200;
 let c = canvas.getContext('2d');
 
 /* CLASSES */
@@ -99,7 +99,7 @@ const newNode = (x, y, data) => {
     node.r = 0;
     const animateNode = () => {
         let id = requestAnimationFrame(animateNode);
-        if (node.r <= 20) { // Animation loop
+        if (node.r < 20) { // Animation loop
             disablePush(true);
             disablePop(true);
             node.update();
@@ -195,11 +195,38 @@ const moveNode = (node, direction) => {
         }
         else if (direction == "right") {
             if (node.x < x + 100) {
-                c.clearRect(node.x, node.y, canvas.width, canvas.height);
-                c.clearRect(node.x, node.y, -canvas.width, canvas.height);
-                c.clearRect(node.x, node.y, canvas.width, -30);
-                c.clearRect(node.x, node.y, -canvas.width, -30);
+                c.clearRect(node.x, node.y, 30, canvas.height);
+                c.clearRect(node.x, node.y, -30, canvas.height);
+                c.clearRect(node.x, node.y, 30, -30);
+                c.clearRect(node.x, node.y, -30, -30);
                 node.moveRight();
+            }
+            else {
+                cancelAnimationFrame(id);
+            }
+        }
+        else if (direction == "down") {
+            if (node.y < y + 100) {
+                c.clearRect(node.x, node.y, 30, canvas.height);
+                c.clearRect(node.x, node.y, -30, canvas.height);
+                c.clearRect(node.x, node.y, 30, -30);
+                c.clearRect(node.x, node.y, -30, -30);
+                node.moveDown();
+            }
+            else {
+                cancelAnimationFrame(id);
+            }
+        }
+        else if (direction == "up") {
+            if (node.y > y - 100) {
+                c.clearRect(node.x, node.y, 30, canvas.height);
+                c.clearRect(node.x, node.y, -30, canvas.height);
+                c.clearRect(node.x, node.y, 30, -30);
+                c.clearRect(node.x, node.y, -30, -30);
+                node.moveUp();
+            }
+            else {
+                cancelAnimationFrame(id);
             }
         }
     }
@@ -212,7 +239,7 @@ const animateDelete = (node) => {
     let r = 0;
     const animate = () => {
         let id = requestAnimationFrame(animate);
-        if (r < node.r) {
+        if (r <= node.r) {
             r += 1;
             c.beginPath();
             c.fillStyle = "#FF0000";
@@ -229,6 +256,22 @@ const animateDelete = (node) => {
 const setTitle = (structType) => {
     c.clearRect(0, 0, canvas.width, canvas.height)
     c.font = "30px Helvetica, Arial, sans-serif";
-    c.fillText(structType, canvas.width/2, 80);
+    c.fillStyle = "#000"
+    c.fillText(structType, 100, 60);
+    c.font = "18px Helvetica"
 } 
 setTitle("Stack");
+
+const label = (node, data) => {
+    // Label
+    c.font = "16px Helvetica";
+    c.fillStyle = "#000";
+    c.fillText(`int data = ${data};`, node.x-30, node.y-40); 
+}
+
+const label2 = (node, data) => {
+    // Label
+    c.font = "16px Helvetica";
+    c.fillStyle = "#000";
+    c.fillText(`int data = ${data};`, node.x+40, node.y);
+}

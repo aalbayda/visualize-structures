@@ -20,175 +20,114 @@ class Stack {
 
 let stack;
 const newStack = () => {
+    // Update code snippet
+    textNewStack();
+    // New stack
     stack = new Stack();
+    // Restart canvas;
     c.clearRect(0, 0, canvas.width, canvas.height);
     setTitle("Stack");
-    newHead(canvas.width/2, 150);
-    document.querySelector('textarea').innerHTML = 
-`typedef struct Node {
-    int data;
-    struct* next;
-} NODE;
-
-NODE* head = (NODE*)malloc(sizeof(NODE));
-head = NULL;
-    `;
+    head = newNode(canvas.width/2-100, 50);
+    // Label
+    c.fillStyle = "#000"
+    c.font = "16px Helvetica";
+    c.fillText("Head (top)", head.x-120, head.y);
+    // Re-enable push
+    setTimeout(()=>{
+        disablePush(false);
+    }, 600)
 }
-const push = (e) => {
-    let data = Math.round((Math.random()*100)+1);
-    let node, p;
-    console.log(stack.isEmpty())
+
+const push = () => {
+    // Initialize
+    let data = Math.round((Math.random()*100)+1); // Random data inside new node
+    let node; // Node, pointer from previous node
+    textPush(data); // Update code snippet
+
     if (stack.isEmpty()) {
-        node = new Node(head.x, head.y+100);
-        document.getElementById('btn-push').disabled = false;
-
-        document.querySelector('textarea').innerHTML = 
-`void push(NODE* head, int data) {
-    NODE* newNode =  (NODE*)malloc(sizeof(NODE));
-    newNode->data = data;
-    newNode->next = head;
-    head = newNode;
-}
-push(head, ${data});
-`
+        node = newNode(head.x+100, head.y, data);
+        label2(node, data);
+        stack.push(node);
+        let p = newPointer(head.x, head.y, node.x, node.y, "right");
     }
     else {
-        node = new Node(stack.peek().x, stack.peek().y+100);
-
-        document.querySelector('textarea').innerHTML = 
-`void push(NODE* head, int data) {
-    NODE* newNode =  (NODE*)malloc(sizeof(NODE));
-    newNode->data = data;
-    newNode->next = head;
-    head = newNode;
-}
-push(head, ${data});
-`
-    }
-    const animatePointer = () => {
-        let id = requestAnimationFrame(animatePointer);
-        if (p.y2 <= node.y-15) {
-            console.log(p.y2)
-            p.update();
+        // If stack is not empty, move everything down first
+        for (let i = stack.elements.length-1; i >= 0; i--) {
+            moveNode(stack.elements[i], "down");
+            c.clearRect(stack.elements[i].x+40, stack.elements[i].y-30, canvas.width, canvas.height);
+            setTimeout (() => {
+                label2(stack.elements[i], stack.elements[i].data);
+            }, 300)
         }
-        else {
-            c.beginPath();
-            c.moveTo(p.x2, p.y2);
-            c.lineTo(p.x2+5*Math.cos(45), p.y2-5*Math.sin(45)); // Right arrowhead
-            c.stroke();
-            c.closePath();
-            c.beginPath();
-            c.moveTo(p.x2, p.y2);
-            c.lineTo(p.x2-5*Math.cos(45), p.y2-5*Math.sin(45)); // Left arrowhead
-            c.stroke();
-            c.closePath();
 
-            // Enable pop
-            document.getElementById('btn-pop').disabled = false;
-            cancelAnimationFrame(id);
-        }
-    }
-    let prev = (stack.elements.length>0?stack.peek():head);
-    const animateNode = () => {
-        let id = requestAnimationFrame(animateNode);
-        if (node.r <= 20) {
-            node.update();
-            document.getElementById('btn-push').disabled = true;
-        }
-        else {
-            c.beginPath();
-            c.fillStyle = "#000000";
-            c.arc(node.x, node.y, 5, 0, Math.PI*2, false);
-            c.fill();
-            // Pointer to NULL
-            c.beginPath();
-            c.fillStyle = "#000000";
-            c.arc(node.x, node.y, 5, 0, Math.PI*2, false);
-            c.fill();
-
-            // Pointer to arrow
-            p = new Pointer(prev.x, prev.y, node.x, node.y-15, "down");
-            
-
-            animatePointer();
-
-            // Label
-            c.font = "16px Helvetica";
-            c.fillText(`int data = ${data};`, node.x-130, node.y-20);
-            cancelAnimationFrame(id);
+        // Create new node and push in our actual js stack
+        setTimeout(() => {
+            node = newNode(head.x+100, head.y, data);
+            label2(node, node.data);
             stack.push(node);
-            document.getElementById('btn-push').disabled = false;
-            if (stack.elements.length == 7)
-                document.getElementById('btn-push').disabled = true;
-        }
-        
+
+            for (let i = stack.elements.length-2; i >= 0; i--) {
+                let p = newPointer(stack.elements[i+1].x, stack.elements[i+1].y, stack.elements[i].x, stack.elements[i].y, "down");
+            }
+        }, 600)
     }
-    c.clearRect(prev.x, prev.y+50, canvas.width, canvas.height);
-    c.clearRect(prev.x, prev.y+50, -canvas.width, canvas.height);
-    
-    animateNode();
+
+    // Re-enable push
+    setTimeout(()=>{
+        if (stack.elements[0].y+100 < canvas.height) disablePush(false);
+        disablePop(false);
+    }, 650);
 }
 
-const deletePop = () => {
-    let r = 1;
-    const animate = () => {
-        let id = requestAnimationFrame(animate);
-        console.log(r)
-        if (r <= 20) {
-            document.getElementById('btn-pop').disabled = true;
-            r += 0.9;
-            c.beginPath();
-            c.arc(stack.peek().x, stack.peek().y, r, 0, Math.PI*2, false);
-            c.fillStyle = "#FF0000";
-            c.fill();
-        }
-        else {
-            // Erase
-            cancelAnimationFrame(id);
-            c.clearRect(stack.peek().x, stack.peek().y, canvas.width, canvas.height);
-            c.clearRect(stack.peek().x, stack.peek().y, -canvas.width, canvas.height);
-            c.clearRect(stack.peek().x, stack.peek().y, -canvas.width, -45);
-            c.clearRect(stack.peek().x, stack.peek().y, canvas.width, -45);
-
-            // New arrowheads
-            let fromX = stack.peek().x, fromY = stack.peek().y;
-            c.beginPath();
-            c.moveTo(fromX, fromY-45);
-            c.lineTo(fromX+5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Right arrowhead
-            c.stroke();
-            c.closePath();
-            c.beginPath();
-            c.moveTo(fromX, fromY-45);
-            c.lineTo(fromX-5*Math.cos(45), (fromY-45)-5*Math.sin(45)); // Left arrowhead
-            c.stroke();
-            c.closePath();
-
-            // "NULL"
-            c.fillText("NULL", fromX-10, fromY-30);
-
-            stack.pop();
-
-            if (stack.elements.length > 0)
-                document.getElementById('btn-pop').disabled = false;
-
+const pop = () =>{
+    disablePop(true);
+    textPop(); // Update code snippet
+    if (stack.elements.length == 1) {
+        // Show node deletion
+        animateDelete(stack.peek());
+        setTimeout(() => {
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            // Re-do text
+            setTitle("Stack");
             c.fillStyle = "#000"
-        }
-    }
-    animate();
-}
+            c.font = "16px Helvetica";
+            c.fillText("Head (top)", head.x-120, head.y);
+            head.draw();
+        }, 400);
+        stack.pop();
+    }   
+    else {
+        // Temp node to track head
+        let temp = newNode(stack.peek().x+100, stack.peek().y);
+        let pTemp = newPointer(temp.x, temp.y, stack.peek().x, stack.peek().y, "left");
+        c.fillStyle = "#000"
+        c.font = "16px Helvetica";
+        c.fillText("temp", temp.x, temp.y+40);
 
-const pop = () => {
-    deletePop();
-    document.querySelector('textarea').innerHTML = 
-`int pop(NODE** head) {
-    STACK* temp = *head; 
-    *head = (*head)->next; 
-    int data = temp->data; 
-    free(temp); 
-    return data; 
-} 
-pop(&head);
-`
-    if (stack.elements.length < 8)
-        document.getElementById('btn-push').disabled = false;
+        c.clearRect(stack.peek().x+40, stack.peek().y-30, canvas.width, 30);
+        animateDelete(temp);
+        animateDelete(stack.peek());
+
+        setTimeout(() => {
+            // Delete first nodes
+            c.clearRect(stack.peek().x-25, stack.peek().y-40, canvas.width, canvas.height);
+            stack.pop()
+            // Move nodes back up
+            for (let i = stack.elements.length-1; i >= 0; i--){
+                moveNode(stack.elements[i], "up");
+                setTimeout (() => {
+                    label2(stack.elements[i], stack.elements[i].data);
+                }, 300)
+            }
+            // Redraw pointers
+            setTimeout(() => {
+                for (let i = stack.elements.length-2; i >= 0; i--) {
+                    let p = newPointer(stack.elements[i+1].x, stack.elements[i+1].y, stack.elements[i].x, stack.elements[i].y, "down");
+                }
+                // Re-enable pop
+                if (!stack.isEmpty()) disablePop(false);
+                disablePush(false)
+            }, 550)
+        }, 500);
+    }
 }

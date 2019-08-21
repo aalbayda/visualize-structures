@@ -9,11 +9,11 @@ class Queue {
         this.dequeue = () => {
             return this.elements.pop();
         };
-        this.getFront = () => {
-            return this.elements[this.elements.length-1];
-        };
         this.getRear = () => {
             return this.elements[0];
+        };
+        this.getFront = () => {
+            return this.elements[this.elements.length-1];
         }
         this.isEmpty = () => {
             return this.elements.length == 0; 
@@ -24,6 +24,8 @@ class Queue {
 // New queue
 let queue;
 const newQueue = () => {
+    // Update code snippet
+    textNewQueue();
     // New queue
     queue = new Queue();
     // Restart canvas
@@ -38,12 +40,10 @@ const newQueue = () => {
     c.fillText("Head (front)", head.x+30, head.y-20);
     c.font = "16px Helvetica";
     c.fillText("Tail (rear)", tail.x-100, tail.y-20);
-    // Update code snippet
-    textNewQueue();
     // Re-enable push
     setTimeout(()=>{
         disablePush(false);
-    }, 500)
+    }, 600)
 }
 
 const enqueue = (e) => {
@@ -78,9 +78,9 @@ const enqueue = (e) => {
             c.fillStyle = "#000"
             // New text and new pointer
             setTimeout(() => {
-                c.fillText("Tail (rear)", tail.x+40, tail.y);  
+                c.fillText("Tail (rear)", tail.x-30, tail.y+40);  
                 pTail = newPointer(tail.x, tail.y, node.x, node.y, "up");
-            }, 500)
+            }, 551)
         }
     }, 550)
 
@@ -88,18 +88,17 @@ const enqueue = (e) => {
     setTimeout(()=>{
         if (node.x-100 > 0) disablePush(false);
         disablePop(false);
-    }, 600);
+    }, 800);
 
-    // Label
-    c.font = "14px Helvetica";
-    c.fillStyle = "#000";
-    c.fillText(`int data = ${data};`, node.x-30, node.y-40); 
+    label(node,data);
 
-    // Enqueue in our actual (backend) queue
+    // Enqueue in our actual javascript queue
     queue.enqueue(node);
 }
 
 const dequeue = () => {
+    disablePop(true);
+    textDequeue();
     if (queue.elements.length == 1) {
         animateDelete(queue.getRear());
         setTimeout(() => {
@@ -111,35 +110,64 @@ const dequeue = () => {
         queue.dequeue();
     }
     else {
-        animateDelete(queue.getFront());
+        // Temp node to track head
+        let temp = newNode(queue.getFront().x, queue.getFront().y+100);
+        let pTemp = newPointer(temp.x, temp.y, queue.getFront().x, queue.getFront().y, "up");
+        c.fillStyle = "#000"
+        c.font = "16px Helvetica";
+        c.fillText("temp", temp.x, temp.y+40);
+
         setTimeout(() => {
-            c.clearRect(0, 0, canvas.width, canvas.height);
-            setTitle("Queue");
-            head.draw();
-            tail.draw();
-            queue.dequeue();
-            for (let i = 0; i < queue.elements.length; i++) {
-                queue.elements[i].draw();
-                moveNode(queue.elements[i], "right");
-            }
-        }, 400);
+            animateDelete(temp);
+            animateDelete(queue.getFront());
+            setTimeout(() => {
+                c.clearRect(0, 0, canvas.width, canvas.height);
+                setTitle("Queue");
+                head.draw();
+                tail.draw();
+                queue.dequeue();
+                for (let i = queue.elements.length-1; i >= 0; i--) {
+                    let node = queue.elements[i];
+                    node.draw();
+                    moveNode(node, "right");
+
+                    // Re-draw pointers
+                    let prev = (i==queue.elements.length-1)?head:queue.elements[i+1];
+                    setTimeout(() => {
+                        label(node, node.data); //Re-label
+                        p = newPointer(prev.x, prev.y, node.x, node.y, "left");     
+                    }, 500);
+                }
+
+                moveNode(tail, "right");
+                setTimeout(() => {
+                    p = newPointer(tail.x, tail.y, queue.getRear().x, queue.getRear().y, "up");
+                }, 502)
+            }, 501);
+        }, 500)
+
+
     }
 
     setTimeout(() => {    
         // Move tail right
-        moveNode(tail, "right");
+        if (queue.isEmpty()) moveNode(tail, "right");
 
+        // Re-label head
+        c.fillStyle = "#000"
         setTimeout(() => {
-             // Re-do label
+             // Re-do tail (since it gets cleared when node moves right)
             c.fillStyle = "#000"
             c.font = "16px Helvetica";
             c.fillText("Head (front)", head.x+30, head.y-20);
             c.font = "16px Helvetica";
-            c.fillText("Tail (rear)", tail.x-100, tail.y-20);
-            
-        }, 500)
+            c.fillText("Tail (rear)", tail.x-30, tail.y+40);
+
+            // Re-enable pop
+            if (!queue.isEmpty()) disablePop(false);
+
+            disablePush(false); // Since newNode() disables push
+        }, 900)
 
     }, 500);
-
-    
 }

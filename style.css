@@ -6,6 +6,10 @@ body {
     -o-background-size: cover;
 }
 
+nav {
+    font-fa: "Merriweather"
+}
+
 .card {
     min-height: 200px;
     margin: 1%;
@@ -22,7 +26,6 @@ canvas {
     width: 100%;
     margin-top: 1%;
     margin-bottom: 1%;
-    background-color: #EEE;
-    border: .5px solid lightgrey;
+    background-color: rgba(211, 211, 211, 0.918);
     border-radius: 5px;
 }
