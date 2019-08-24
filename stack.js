@@ -19,7 +19,7 @@ class Stack {
 }
 
 let stack;
-const newStack = () => {
+async function newStack() {
     // Update code snippet
     textNewStack();
     // New stack
@@ -27,56 +27,43 @@ const newStack = () => {
     // Restart canvas;
     c.clearRect(0, 0, canvas.width, canvas.height);
     setTitle("Stack");
-    head = newNode(canvas.width/2-100, 50);
+    head = await newNode(canvas.width/2-100, 50);
     // Label
     c.fillStyle = "#000"
     c.font = "16px Helvetica";
     c.fillText("Head (top)", head.x-120, head.y);
     // Re-enable push
-    setTimeout(()=>{
-        disablePush(false);
-    }, 600)
+    disablePush(false);
 }
 
-const push = () => {
+const push = async () => {
     // Initialize
     let data = Math.round((Math.random()*100)+1); // Random data inside new node
     let node; // Node, pointer from previous node
     textPush(data); // Update code snippet
 
     if (stack.isEmpty()) {
-        node = newNode(head.x+100, head.y, data);
-        label2(node, data);
+        node = await newNode(head.x+100, head.y, data);
+        //label2(node, data);
         stack.push(node);
-        let p = newPointer(head.x, head.y, node.x, node.y, "right");
+        let p = await newPointer(head.x, head.y, node.x, node.y, "right");
     }
     else {
         // If stack is not empty, move everything down first
-        for (let i = stack.elements.length-1; i >= 0; i--) {
-            moveNode(stack.elements[i], "down");
-            c.clearRect(stack.elements[i].x+40, stack.elements[i].y-30, canvas.width, canvas.height);
-            setTimeout (() => {
-                label2(stack.elements[i], stack.elements[i].data);
-            }, 300)
-        }
+        await moveNodes(stack, "down");
 
         // Create new node and push in our actual js stack
-        setTimeout(() => {
-            node = newNode(head.x+100, head.y, data);
-            label2(node, node.data);
-            stack.push(node);
+        node = await newNode(head.x+100, head.y, data);
+        //label2(node, node.data);
+        stack.push(node);
 
-            for (let i = stack.elements.length-2; i >= 0; i--) {
-                let p = newPointer(stack.elements[i+1].x, stack.elements[i+1].y, stack.elements[i].x, stack.elements[i].y, "down");
-            }
-        }, 600)
+        for (let i = stack.elements.length-2; i >= 0; i--) {
+            let p = newPointer(stack.elements[i+1].x, stack.elements[i+1].y, stack.elements[i].x, stack.elements[i].y, "down");
+        }
     }
-
     // Re-enable push
-    setTimeout(()=>{
-        if (stack.elements[0].y+100 < canvas.height) disablePush(false);
-        disablePop(false);
-    }, 650);
+    if (stack.elements[0].y+100 < canvas.height) disablePush(false);
+    disablePop(false);
 }
 
 const pop = () =>{

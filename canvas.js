@@ -110,7 +110,7 @@ const newNode = (x, y, data) => {
     }
     animateNode();
     console.log(node)
-    return node;
+    return new Promise((resolve, reject) => setTimeout(() => resolve(node), 200));
 }
 
 // New pointer + animation + arrowhead
@@ -172,6 +172,8 @@ const newPointer = (x1, y1, x2, y2, direction) => {
         }
     }
     animatePointer();
+
+    return new Promise((resolve,reject)=>setTimeout(()=>resolve(), 300))
 }
 
 // Move node
@@ -231,8 +233,20 @@ const moveNode = (node, direction) => {
         }
     }
     animateNode();
+    //return new Promise((resolve, reject) => setTimeout(() => resolve(), 200))
 }
 
+const moveNodes = (struct, direction) => {
+    if (direction == "down") {
+        for (let i = struct.elements.length-1; i >= 0; i--) {
+            moveNode(struct.elements[i], direction);
+            c.clearRect(struct.elements[i].x+40, struct.elements[i].y-30, canvas.width, canvas.height);
+            label2(struct.elements[i], struct.elements[i].data);
+        }
+    }
+
+    return new Promise((resolve, reject) => setTimeout(()=>resolve(), 200))
+}
 
 // Animation for node about to be removed
 const animateDelete = (node) => {
