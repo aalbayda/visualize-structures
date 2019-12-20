@@ -1,2 +1,2 @@
 # Stacks and Queues
-Website I made back when we were studying for our first lesson in Data Structures.
+Website I made back during the first week of Data Structures class.
